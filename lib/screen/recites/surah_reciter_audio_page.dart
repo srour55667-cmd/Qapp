@@ -39,21 +39,16 @@
 //     _player = AudioPlayer();
 //     currentIndex = widget.initialSurahIndex;
 
-//     /// Listener State
 //     _stateSub = _player.onPlayerStateChanged.listen((state) {
 //       if (!mounted) return;
-//       setState(() {
-//         isPlaying = state == PlayerState.playing;
-//       });
+//       setState(() => isPlaying = state == PlayerState.playing);
 //     });
 
-//     /// Listener Duration
 //     _durationSub = _player.onDurationChanged.listen((d) {
 //       if (!mounted) return;
 //       setState(() => duration = d);
 //     });
 
-//     /// Listener Position
 //     _positionSub = _player.onPositionChanged.listen((p) {
 //       if (!mounted) return;
 //       setState(() => position = p);
@@ -89,24 +84,17 @@
 
 //   @override
 //   void dispose() {
-//     /// توقف كل شيء قبل الإغلاق
 //     _stateSub?.cancel();
 //     _durationSub?.cancel();
 //     _positionSub?.cancel();
 
 //     _player.stop();
 //     _player.dispose();
-
 //     super.dispose();
 //   }
 
-//   String twoDigits(int n) => n.toString().padLeft(2, '0');
-
-//   String format(Duration d) {
-//     final m = twoDigits(d.inMinutes);
-//     final s = twoDigits(d.inSeconds % 60);
-//     return "$m:$s";
-//   }
+//   String fmt(Duration d) =>
+//       "${d.inMinutes.toString().padLeft(2, '0')}:${(d.inSeconds % 60).toString().padLeft(2, '0')}";
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -115,75 +103,152 @@
 
 //     return Scaffold(
 //       appBar: AppBar(title: Text("سورة $surahName"), centerTitle: true),
-//       body: Padding(
-//         padding: const EdgeInsets.all(20),
-//         child: Column(
-//           children: [
-//             const SizedBox(height: 20),
+//       body: Container(
+//         decoration: BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [
+//               Colors.purple.shade50,
+//               Colors.white,
+//               Colors.purple.shade50,
+//             ],
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//           ),
+//         ),
+//         child: SafeArea(
+//           child: Column(
+//             children: [
+//               const SizedBox(height: 20),
 
-//             Text(
-//               "سورة $surahName",
-//               style: const TextStyle(
-//                 fontSize: 24,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.purple,
+//               // زخرفة علوية
+//               Image.asset(
+//                 "assets/images/islamic_pattern.png",
+//                 width: 130,
+//                 height: 130,
+//                 opacity: const AlwaysStoppedAnimation(.35),
 //               ),
-//             ),
 
-//             const SizedBox(height: 30),
+//               const SizedBox(height: 10),
 
-//             Slider(
-//               value: position.inSeconds.toDouble().clamp(
-//                 0,
-//                 duration.inSeconds + 0.0,
+//               // إطار زخرفي
+//               Container(
+//                 padding: const EdgeInsets.symmetric(
+//                   vertical: 14,
+//                   horizontal: 28,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   border: Border.all(color: Colors.purple.shade300, width: 2),
+//                   borderRadius: BorderRadius.circular(18),
+//                 ),
+//                 child: Text(
+//                   "سورة $surahName ",
+
+//                   style: TextStyle(
+//                     fontSize: 26,
+//                     fontWeight: FontWeight.bold,
+//                     color: Colors.purple.shade700,
+//                   ),
+//                 ),
 //               ),
-//               min: 0,
-//               max: duration.inSeconds.toDouble() + 1,
-//               onChanged: (v) {
-//                 _player.seek(Duration(seconds: v.toInt()));
-//               },
-//               activeColor: Colors.purple,
-//             ),
-
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [Text(format(position)), Text(format(duration))],
-//             ),
-
-//             const SizedBox(height: 30),
-
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 IconButton(
-//                   icon: const Icon(
-//                     Icons.skip_previous,
-//                     size: 40,
-//                     color: Colors.purple,
-//                   ),
-//                   onPressed: previous,
+//               const SizedBox(height: 20),
+//               Text(
+//                 " ${widget.reciter.name}",
+//                 style: TextStyle(
+//                   fontSize: 20,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.purple.shade400,
 //                 ),
-//                 IconButton(
-//                   icon: Icon(
-//                     isPlaying ? Icons.pause_circle : Icons.play_circle,
-//                     size: 70,
-//                     color: Colors.purple,
-//                   ),
-//                   onPressed: () {
-//                     isPlaying ? _player.pause() : _player.resume();
-//                   },
+//               ),
+
+//               const SizedBox(height: 40),
+
+//               // شريط التقدم
+//               Slider(
+//                 value: position.inSeconds.toDouble().clamp(
+//                   0,
+//                   duration.inSeconds + 0.0,
 //                 ),
-//                 IconButton(
-//                   icon: const Icon(
-//                     Icons.skip_next,
-//                     size: 40,
-//                     color: Colors.purple,
-//                   ),
-//                   onPressed: next,
+//                 min: 0,
+//                 max: duration.inSeconds.toDouble() + 1,
+//                 activeColor: Colors.purple,
+//                 onChanged: (v) {
+//                   _player.seek(Duration(seconds: v.toInt()));
+//                 },
+//               ),
+
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 26),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     Text(
+//                       fmt(position),
+//                       style: const TextStyle(
+//                         fontSize: 16,
+//                         color: Colors.black87,
+//                       ),
+//                     ),
+//                     Text(
+//                       fmt(duration),
+//                       style: const TextStyle(
+//                         fontSize: 16,
+//                         color: Colors.black87,
+//                       ),
+//                     ),
+//                   ],
 //                 ),
-//               ],
-//             ),
-//           ],
+//               ),
+
+//               const SizedBox(height: 40),
+
+//               // أزرار التشغيل
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   IconButton(
+//                     iconSize: 42,
+//                     color: Colors.purple.shade700,
+//                     icon: const Icon(Icons.skip_previous),
+//                     onPressed: previous,
+//                   ),
+
+//                   const SizedBox(width: 25),
+
+//                   CircleAvatar(
+//                     radius: 40,
+//                     backgroundColor: Colors.purple.shade300,
+//                     child: IconButton(
+//                       iconSize: 48,
+//                       color: Colors.white,
+//                       icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+//                       onPressed: () {
+//                         isPlaying ? _player.pause() : _player.resume();
+//                       },
+//                     ),
+//                   ),
+
+//                   const SizedBox(width: 25),
+
+//                   IconButton(
+//                     iconSize: 42,
+//                     color: Colors.purple.shade700,
+//                     icon: const Icon(Icons.skip_next),
+//                     onPressed: next,
+//                   ),
+//                 ],
+//               ),
+
+//               const SizedBox(height: 50),
+
+//               // زخرفة سفلية
+//               Image.asset(
+//                 "assets/images/islamic_pattern.png",
+//                 width: 150,
+//                 height: 150,
+//                 opacity: const AlwaysStoppedAnimation(.3),
+//               ),
+//             ],
+//           ),
 //         ),
 //       ),
 //     );
@@ -278,92 +343,80 @@ class _SurahReciterAudioPageState extends State<SurahReciterAudioPage> {
     _stateSub?.cancel();
     _durationSub?.cancel();
     _positionSub?.cancel();
-
-    _player.stop();
     _player.dispose();
     super.dispose();
   }
 
-  String fmt(Duration d) =>
-      "${d.inMinutes.toString().padLeft(2, '0')}:${(d.inSeconds % 60).toString().padLeft(2, '0')}";
+  String fmt(Duration d) {
+    final m = d.inMinutes.toString().padLeft(2, '0');
+    final s = (d.inSeconds % 60).toString().padLeft(2, '0');
+    return "$m:$s";
+  }
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
     final surahNum = widget.moshaf.surahList[currentIndex];
     final surahName = arabicSuraNames[surahNum - 1];
 
     return Scaffold(
       appBar: AppBar(title: Text("سورة $surahName"), centerTitle: true),
+
       body: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Colors.purple.shade50,
-              Colors.white,
-              Colors.purple.shade50,
-            ],
+            colors: [primary.withOpacity(0.10), primary.withOpacity(0.03)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
+
         child: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
 
-              // زخرفة علوية
-              Image.asset(
-                "assets/images/islamic_pattern.png",
-                width: 130,
-                height: 130,
-                opacity: const AlwaysStoppedAnimation(.35),
-              ),
-
-              const SizedBox(height: 10),
-
-              // إطار زخرفي
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 14,
-                  horizontal: 28,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.purple.shade300, width: 2),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Text(
-                  "سورة $surahName ",
-
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple.shade700,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+              /// -----------------------------
+              ///  عنوان السورة
+              /// -----------------------------
               Text(
-                " ${widget.reciter.name}",
+                "سورة $surahName",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.purple.shade400,
+                  color: primary,
+                  fontFamily: "Amiri",
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Text(
+                widget.reciter.name,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: onSurface.withOpacity(0.8),
                 ),
               ),
 
               const SizedBox(height: 40),
 
-              // شريط التقدم
+              /// -----------------------------
+              ///      شريط التقدم
+              /// -----------------------------
               Slider(
-                value: position.inSeconds.toDouble().clamp(
-                  0,
-                  duration.inSeconds + 0.0,
-                ),
+                activeColor: primary,
+                inactiveColor: primary.withOpacity(0.3),
+                value: position.inSeconds
+                    .clamp(0, duration.inSeconds)
+                    .toDouble(),
                 min: 0,
                 max: duration.inSeconds.toDouble() + 1,
-                activeColor: Colors.purple,
-                onChanged: (v) {
-                  _player.seek(Duration(seconds: v.toInt()));
+                onChanged: (value) {
+                  _player.seek(Duration(seconds: value.toInt()));
                 },
               ),
 
@@ -372,72 +425,69 @@ class _SurahReciterAudioPageState extends State<SurahReciterAudioPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      fmt(position),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    Text(
-                      fmt(duration),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
+                    Text(fmt(position), style: TextStyle(color: onSurface)),
+                    Text(fmt(duration), style: TextStyle(color: onSurface)),
                   ],
                 ),
               ),
 
               const SizedBox(height: 40),
 
-              // أزرار التشغيل
+              /// -----------------------------
+              ///       أزرار التحكم
+              /// -----------------------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    iconSize: 42,
-                    color: Colors.purple.shade700,
-                    icon: const Icon(Icons.skip_previous),
+                    iconSize: 38,
+                    color: primary,
+                    icon: const Icon(Icons.skip_previous_rounded),
                     onPressed: previous,
                   ),
 
                   const SizedBox(width: 25),
 
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.purple.shade300,
-                    child: IconButton(
-                      iconSize: 48,
-                      color: Colors.white,
-                      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                      onPressed: () {
-                        isPlaying ? _player.pause() : _player.resume();
-                      },
+                  /// زر التشغيل الدائري
+                  InkWell(
+                    onTap: () {
+                      isPlaying ? _player.pause() : _player.resume();
+                    },
+                    borderRadius: BorderRadius.circular(80),
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: primary,
+                        boxShadow: [
+                          BoxShadow(
+                            color: primary.withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        isPlaying ? Icons.pause : Icons.play_arrow,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
 
                   const SizedBox(width: 25),
 
                   IconButton(
-                    iconSize: 42,
-                    color: Colors.purple.shade700,
-                    icon: const Icon(Icons.skip_next),
+                    iconSize: 38,
+                    color: primary,
+                    icon: const Icon(Icons.skip_next_rounded),
                     onPressed: next,
                   ),
                 ],
               ),
 
               const SizedBox(height: 50),
-
-              // زخرفة سفلية
-              Image.asset(
-                "assets/images/islamic_pattern.png",
-                width: 150,
-                height: 150,
-                opacity: const AlwaysStoppedAnimation(.3),
-              ),
             ],
           ),
         ),

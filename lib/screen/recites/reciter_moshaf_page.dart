@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:qapp/model/Recitersmodel.dart';
-// import 'package:qapp/screen/recites/surah_reciter_audio_page.dart';
+// import 'package:qapp/screen/recites/select_surah_page.dart';
 
 // class ReciterMoshafPage extends StatelessWidget {
 //   final Reciter reciter;
@@ -23,54 +23,29 @@
 //             decoration: BoxDecoration(
 //               color: Colors.purple.shade50,
 //               borderRadius: BorderRadius.circular(16),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.purple.shade100.withOpacity(0.4),
-//                   blurRadius: 10,
-//                   offset: const Offset(0, 4),
-//                 ),
-//               ],
 //             ),
-//             child: Row(
-//               children: [
-//                 CircleAvatar(
-//                   radius: 24,
-//                   backgroundColor: Colors.purple.shade300,
-//                   child: Text(
-//                     "${m.id}",
-//                     style: const TextStyle(
-//                       color: Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
+//             child: ListTile(
+//               title: Text(
+//                 m.name,
+//                 style: const TextStyle(
+//                   fontSize: 18,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.purple,
 //                 ),
-//                 const SizedBox(width: 16),
-//                 Expanded(
-//                   child: Text(
-//                     m.name,
-//                     style: const TextStyle(
-//                       fontSize: 17,
-//                       fontWeight: FontWeight.bold,
-//                       color: Colors.purple,
-//                     ),
+//               ),
+//               trailing: const Icon(
+//                 Icons.arrow_forward_ios,
+//                 color: Colors.purple,
+//               ),
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (_) =>
+//                         SelectSurahPage(moshaf: m, reciter: reciter),
 //                   ),
-//                 ),
-//                 IconButton(
-//                   icon: const Icon(
-//                     Icons.arrow_forward_ios,
-//                     color: Colors.purple,
-//                   ),
-//                   onPressed: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (_) =>
-//                             SurahReciterAudioPage(moshaf: m, reciter: reciter),
-//                       ),
-//                     );
-//                   },
-//                 ),
-//               ],
+//                 );
+//               },
 //             ),
 //           );
 //         },
@@ -89,34 +64,58 @@ class ReciterMoshafPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final cardColor = Theme.of(context).cardColor;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
     return Scaffold(
       appBar: AppBar(title: Text(reciter.name), centerTitle: true),
+
       body: ListView.builder(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         itemCount: reciter.moshaf.length,
         itemBuilder: (context, index) {
           final m = reciter.moshaf[index];
 
-          return Container(
+          return AnimatedContainer(
+            duration: Duration(milliseconds: 300 + index * 40),
+            curve: Curves.easeOut,
             margin: const EdgeInsets.symmetric(vertical: 10),
-            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.purple.shade50,
-              borderRadius: BorderRadius.circular(16),
+              color: cardColor,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: primary.withOpacity(0.12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
+
             child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+
+              leading: CircleAvatar(
+                radius: 26,
+                backgroundColor: primary.withOpacity(0.15),
+                child: Icon(Icons.menu_book_rounded, color: primary),
+              ),
+
               title: Text(
                 m.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.purple,
+                  color: onSurface,
                 ),
               ),
-              trailing: const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.purple,
-              ),
+
+              trailing: Icon(Icons.arrow_forward_ios_rounded, color: primary),
+
               onTap: () {
                 Navigator.push(
                   context,
