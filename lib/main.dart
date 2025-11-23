@@ -1,35 +1,7 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:qapp/data/cubit/home_cubit.dart';
-// import 'package:qapp/screen/splashscreen.dart';
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-
-// class _MyAppState extends State<MyApp> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocProvider(
-//       create: (BuildContext context) {
-//         return HomeCubit();
-//       },
-//       child: MaterialApp(
-//         debugShowCheckedModeBanner: false,
-//         home: const Splashscreen(),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qapp/data/cubit/dhikr_cubit.dart';
 
 // Cubits
 import 'package:qapp/data/cubit/themcubit.dart';
@@ -37,16 +9,34 @@ import 'package:qapp/data/cubit/home_cubit.dart';
 
 // Screens
 import 'package:qapp/screen/homepage.dart';
+import 'package:qapp/screen/splashscreen.dart';
 import 'package:qapp/screen/themfile/app_themes.dart';
+import 'package:qapp/services/notificationservices/notification_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
+ensureNotificationPermissions() async {
+  final status = await Permission.notification.status;
+  if (status.isDenied || status.isPermanentlyDenied) {
+    final result = await Permission.notification.request();
+    if (result.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+}
 
 void main() async {
+  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
+  ensureNotificationPermissions();
+  await NotificationService.initialize();
+  await NotificationService.scheduleDhikrAfterTwoHours();
 
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => HomeCubit()),
+        BlocProvider(create: (_) => DhikrCubit()),
       ],
       child: const MyApp(),
     ),
@@ -137,7 +127,7 @@ class MyApp extends StatelessWidget {
           theme: finalLight,
           darkTheme: dark,
 
-          home: const HomePage(),
+          home: const Splashscreen(),
         );
       },
     );

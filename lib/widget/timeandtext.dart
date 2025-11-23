@@ -17,7 +17,7 @@ class _TimeandtextState extends State<Timeandtext> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            "My quran",
+            "ايات من الذكر ",
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,

@@ -9,6 +9,7 @@ import 'package:qapp/model/TafsirModel.dart';
 import 'package:qapp/model/TafsirService.dart';
 import 'package:qapp/model/radio_model.dart';
 import 'package:qapp/model/surah_model.dart';
+import 'package:qapp/services/notificationservices/notification_service.dart';
 
 class HomeCubit extends Cubit<Homestate> {
   HomeCubit() : super(Initialstate());
@@ -121,25 +122,6 @@ class HomeCubit extends Cubit<Homestate> {
   }
 
   /// ================================
-  /// GET PRAYER TIMES
-  Future<PrayerData?> getPrayerTimes(String city) async {
-    emit(PrayerLoadingState());
-
-    try {
-      final data = await prayerService.getPrayerTimesByCity(
-        city: city,
-        country: "Egypt",
-      );
-
-      emit(PrayerSuccessState(data: data));
-      return data;
-    } catch (e) {
-      emit(PrayerErrorState(message: e.toString()));
-      return null;
-    }
-  }
-
-  /// ================================
   /// GET TAFSIR
   Future<List<TafsirModel>> getTafsir(int surahNumber) async {
     emit(LoadingState());
@@ -154,4 +136,38 @@ class HomeCubit extends Cubit<Homestate> {
   }
 
   /// ================================
+  Future<PrayerData?> getPrayerTimes(String city) async {
+    emit(PrayerLoadingState());
+
+    try {
+      final data = await prayerService.getPrayerTimesByCity(
+        city: city,
+        country: "Egypt",
+      );
+
+      emit(PrayerSuccessState(data: data));
+
+      // --------------------------
+      //  إضافة جدولة الصلاة هنا
+      // --------------------------
+      final timings = data.timings;
+
+      final fajr = NotificationService.parsePrayerTime(timings.fajr);
+      final dhuhr = NotificationService.parsePrayerTime(timings.dhuhr);
+      final asr = NotificationService.parsePrayerTime(timings.asr);
+      final maghrib = NotificationService.parsePrayerTime(timings.maghrib);
+      final isha = NotificationService.parsePrayerTime(timings.isha);
+
+      NotificationService.schedulePrayer(1, "الفجر", fajr);
+      NotificationService.schedulePrayer(2, "الظهر", dhuhr);
+      NotificationService.schedulePrayer(3, "العصر", asr);
+      NotificationService.schedulePrayer(4, "المغرب", maghrib);
+      NotificationService.schedulePrayer(5, "العشاء", isha);
+
+      return data;
+    } catch (e) {
+      emit(PrayerErrorState(message: e.toString()));
+      return null;
+    }
+  }
 }
