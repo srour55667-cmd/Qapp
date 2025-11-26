@@ -55,7 +55,7 @@ class ThemeCubit extends Cubit<ThemeState> {
 
     final themeIndex = prefs.getInt("theme") ?? 0;
     final fontIndex = prefs.getInt("font") ?? 0;
-    final scale = prefs.getDouble("fontScale") ?? 1.0;
+    //final scale = prefs.getDouble("fontScale") ?? 1.0;
 
     final AppTheme theme = AppTheme.values[themeIndex];
     final AppFont font = AppFont.values[fontIndex];
@@ -65,7 +65,7 @@ class ThemeCubit extends Cubit<ThemeState> {
         appTheme: theme,
         themeMode: _convertThemeMode(theme),
         appFont: font,
-        fontScale: scale.clamp(0.8, 1.6),
+        //  fontScale: scale.clamp(0.8, 1.6),
       ),
     );
   }

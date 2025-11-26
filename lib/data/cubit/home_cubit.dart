@@ -51,7 +51,6 @@ class HomeCubit extends Cubit<Homestate> {
 
       final data = response.data['radios'] as List;
 
-      // نفس القنوات اللي كنت مختارها
       final List<int> numid = [3, 32, 52, 58, 63, 68, 69];
 
       final radios = data

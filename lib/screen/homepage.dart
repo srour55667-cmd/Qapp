@@ -7,11 +7,11 @@ import 'package:qapp/screen/azkar/AzkarCategoriesPage.dart';
 import 'package:qapp/screen/prayer/prayer_page.dart';
 import 'package:qapp/screen/settingpage/setting.dart';
 import 'package:qapp/screen/sipha/tasbeeh_page.dart';
+
 import 'package:qapp/screen/surah/suwar_page.dart';
 import 'package:qapp/screen/radio/radio_page.dart';
 import 'package:qapp/screen/recites/recites_page.dart';
 import 'package:qapp/screen/tafseer/TafsirCategoriesPage.dart';
-import 'package:qapp/services/notificationservices/notification_service.dart';
 
 // ودجت
 import 'package:qapp/widget/timeandtext.dart';
