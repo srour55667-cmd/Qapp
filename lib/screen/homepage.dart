@@ -89,13 +89,18 @@ class HomePage extends StatelessWidget {
             // ===============================
             //         TITLE
             // ===============================
-            Text(
-              "الأقسام",
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: primary,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "الأقسام",
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: primary,
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
