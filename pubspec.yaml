@@ -39,21 +39,19 @@ dependencies:
   permission_handler: ^12.0.1
   timezone: ^0.10.1
   cached_network_image: ^3.4.1
-  flutter_pdfview: ^1.4.3
   flutter_launcher_icons: ^0.14.4
+  quran: ^1.3.3
+  intl: ^0.20.2
+  flutter_bloc: ^9.1.1
+  dio: ^5.9.0
+  audioplayers: ^6.5.0
+  sqflite: ^2.4.2
+  path_provider: ^2.1.5
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  intl: ^0.20.2
-  hijri: ^3.0.0
-  flutter_bloc: ^9.1.1
-  dio: ^5.9.0
-  flutter_svg: ^2.2.0
-  flutter_card_swiper: ^7.0.2
-  card_swiper: ^3.0.1
-  audioplayers: ^6.5.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
