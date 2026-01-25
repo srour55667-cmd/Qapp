@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -7,12 +6,13 @@ import 'package:qapp/data/cubit/dhikr_cubit.dart';
 // Cubits
 import 'package:qapp/data/cubit/themcubit.dart';
 import 'package:qapp/data/cubit/home_cubit.dart';
+import 'package:qapp/data/cubit/reading_progress_cubit.dart';
 
 // Screens
-import 'package:qapp/screen/homepage.dart';
 import 'package:qapp/screen/splashscreen.dart';
 import 'package:qapp/screen/themfile/app_themes.dart';
 import 'package:qapp/services/notificationservices/notification_service.dart';
+
 import 'package:timezone/data/latest.dart' as tz;
 
 ensureNotificationPermissions() async {
@@ -30,7 +30,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ensureNotificationPermissions();
   await NotificationService.initialize();
-  await NotificationService.scheduleDhikrAfterTwoHours();
+  // Clear old and schedule new batch (reliable strategy)
+  await NotificationService.rescheduleAll();
 
   runApp(
     MultiBlocProvider(
@@ -38,6 +39,7 @@ void main() async {
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => DhikrCubit()),
+        BlocProvider(create: (_) => ReadingProgressCubit()..loadProgress()),
       ],
       child: const MyApp(),
     ),
@@ -90,12 +92,13 @@ class MyApp extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<ThemeCubit>();
 
-        // الأساسيات
-        ThemeData lightBase = AppThemes.lightTheme;
+        // Determine base light theme (Standard or Sepia)
+        ThemeData lightBase = state.appTheme == AppTheme.sepia
+            ? AppThemes.sepiaTheme
+            : AppThemes.lightTheme;
         ThemeData darkBase = AppThemes.darkTheme;
-        ThemeData sepiaBase = AppThemes.sepiaTheme;
 
-        // تكبير الخطوط مع حماية من الكراش
+        // Apply Font & Scale to Light/Sepia Theme
         final light = lightBase.copyWith(
           textTheme: _scaledTextTheme(
             lightBase.textTheme,
@@ -103,6 +106,7 @@ class MyApp extends StatelessWidget {
           ).apply(fontFamily: cubit.currentFont),
         );
 
+        // Apply Font & Scale to Dark Theme
         final dark = darkBase.copyWith(
           textTheme: _scaledTextTheme(
             darkBase.textTheme,
@@ -110,24 +114,11 @@ class MyApp extends StatelessWidget {
           ).apply(fontFamily: cubit.currentFont),
         );
 
-        final sepia = sepiaBase.copyWith(
-          textTheme: _scaledTextTheme(
-            sepiaBase.textTheme,
-            state.fontScale,
-          ).apply(fontFamily: cubit.currentFont),
-        );
-
-        final ThemeData finalLight = state.appTheme == AppTheme.sepia
-            ? sepia
-            : light;
-
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-
           themeMode: state.themeMode,
-          theme: finalLight,
+          theme: light,
           darkTheme: dark,
-
           home: const Splashscreen(),
         );
       },

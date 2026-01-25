@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qapp/screen/homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qapp/data/cubit/home_cubit.dart';
+import 'package:qapp/data/repository/quran_repository.dart';
+import 'package:qapp/screen/surah/quran_init_page.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -25,12 +27,23 @@ class _SplashscreenState extends State<Splashscreen> {
     // 2) جيب مواقيت الصلاة وجدول الإشعارات
     await HomeCubit().getPrayerTimes(city);
 
-    // 3) انتقل للصفحة الرئيسية بعد 3 ثواني
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+    // 3) تفقد جاهزية بيانات القرآن
+    final isQuranReady = await QuranRepository.isQuranDataReady();
+
+    // 4) انتقل للصفحة المطلوبة بعد تأخير بسيط
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      if (!isQuranReady) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const QuranInitPage()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
     });
   }
 

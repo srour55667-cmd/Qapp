@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qapp/data/cubit/themcubit.dart';
+import 'package:qapp/screen/debug/notifications_test_screen.dart';
 
 class ThemeSettingsPage extends StatelessWidget {
   const ThemeSettingsPage({super.key});
@@ -89,6 +90,24 @@ class ThemeSettingsPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
+
+              // Hidden Debug Entry
+              GestureDetector(
+                onLongPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationsTestScreen(),
+                    ),
+                  );
+                },
+                child: const Center(
+                  child: Text(
+                    "إصدار التطبيق: 1.0.0",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ),
+              ),
             ],
           );
         },

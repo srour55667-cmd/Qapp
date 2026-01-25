@@ -10,6 +10,7 @@ import 'package:qapp/model/TafsirService.dart';
 import 'package:qapp/model/radio_model.dart';
 import 'package:qapp/model/surah_model.dart';
 import 'package:qapp/services/notificationservices/notification_service.dart';
+import 'package:qapp/data/repository/quran_repository.dart';
 
 class HomeCubit extends Cubit<Homestate> {
   HomeCubit() : super(Initialstate());
@@ -23,13 +24,7 @@ class HomeCubit extends Cubit<Homestate> {
   Future<List<SurahModel>> getSuwar() async {
     emit(LoadingState());
     try {
-      final response = await dio.get(
-        "https://www.mp3quran.net/api/v3/suwar?language=ar",
-      );
-
-      final data = response.data['suwar'] as List;
-      final surahs = data.map((e) => SurahModel.fromJson(e)).toList();
-
+      final surahs = await QuranRepository.getSurahList();
       emit(SrahSuccessState(surahList: surahs));
       return surahs;
     } catch (e) {
@@ -105,6 +100,7 @@ class HomeCubit extends Cubit<Homestate> {
         243,
         253,
         265,
+        286,
       ];
 
       final reciters = data
@@ -146,22 +142,51 @@ class HomeCubit extends Cubit<Homestate> {
 
       emit(PrayerSuccessState(data: data));
 
-      // --------------------------
-      //  إضافة جدولة الصلاة هنا
-      // --------------------------
-      final timings = data.timings;
+      emit(PrayerSuccessState(data: data));
 
-      final fajr = NotificationService.parsePrayerTime(timings.fajr);
-      final dhuhr = NotificationService.parsePrayerTime(timings.dhuhr);
-      final asr = NotificationService.parsePrayerTime(timings.asr);
-      final maghrib = NotificationService.parsePrayerTime(timings.maghrib);
-      final isha = NotificationService.parsePrayerTime(timings.isha);
+      // --------------------------
+      //  Schedule Current Month Prayers (Batch)
+      // --------------------------
+      final calendar = await prayerService.getPrayerCalendarByCity(
+        city: city,
+        country: "Egypt",
+      );
 
-      NotificationService.schedulePrayer(1, "الفجر", fajr);
-      NotificationService.schedulePrayer(2, "الظهر", dhuhr);
-      NotificationService.schedulePrayer(3, "العصر", asr);
-      NotificationService.schedulePrayer(4, "المغرب", maghrib);
-      NotificationService.schedulePrayer(5, "العشاء", isha);
+      await NotificationService.cancelAllPrayers();
+
+      int notificationId = 200; // Start ID for prayers
+
+      for (var dayData in calendar) {
+        final d = dayData.date;
+        final t = dayData.timings;
+        final date = DateTime(d.year, d.month, d.day);
+
+        final prayers = {
+          "الفجر": t.fajr,
+          "الظهر": t.dhuhr,
+          "العصر": t.asr,
+          "المغرب": t.maghrib,
+          "العشاء": t.isha,
+        };
+
+        for (var entry in prayers.entries) {
+          final timeStr = entry.value;
+          final prayerName = entry.key;
+
+          final scheduledTime = NotificationService.parsePrayerDateTime(
+            timeStr,
+            date,
+          );
+
+          if (scheduledTime.isAfter(DateTime.now())) {
+            await NotificationService.scheduleOneTimePrayer(
+              notificationId++,
+              prayerName,
+              scheduledTime,
+            );
+          }
+        }
+      }
 
       return data;
     } catch (e) {
