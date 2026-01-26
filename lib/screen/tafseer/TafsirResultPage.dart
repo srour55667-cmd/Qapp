@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qapp/data/cubit/home_cubit.dart';
 import 'package:qapp/data/cubit/state_cubit.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class TafsirResultPage extends StatefulWidget {
   final int surahNumber;
@@ -13,13 +14,20 @@ class TafsirResultPage extends StatefulWidget {
     required this.surahNumber,
     required this.surahName,
     required this.tafsirCode,
+    this.initialAyahNumber,
   });
+
+  final int? initialAyahNumber;
 
   @override
   State<TafsirResultPage> createState() => _TafsirResultPageState();
 }
 
 class _TafsirResultPageState extends State<TafsirResultPage> {
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+
   @override
   void initState() {
     super.initState();
@@ -56,19 +64,42 @@ class _TafsirResultPageState extends State<TafsirResultPage> {
           if (state is TafsirSuccessState) {
             final list = state.tafsirList;
 
-            return ListView.builder(
+            // Calculate initial index
+            int initialIndex = 0;
+            if (widget.initialAyahNumber != null) {
+              // Ayah numbering usually starts at 1, list index at 0.
+              // Assuming list is sorted by Ayah number.
+              // Safe find:
+              final foundIndex = list.indexWhere(
+                (element) => element.aya == widget.initialAyahNumber.toString(),
+              );
+              if (foundIndex != -1) {
+                initialIndex = foundIndex;
+              }
+            }
+
+            return ScrollablePositionedList.builder(
+              itemScrollController: _itemScrollController,
+              itemPositionsListener: _itemPositionsListener,
+              initialScrollIndex: initialIndex,
               padding: const EdgeInsets.all(16),
               itemCount: list.length,
               itemBuilder: (context, index) {
                 final ayah = list[index];
+                final isSelected =
+                    widget.initialAyahNumber != null &&
+                    ayah.aya == widget.initialAyahNumber.toString();
 
                 return AnimatedContainer(
-                  duration: Duration(milliseconds: 300 + index * 40),
+                  duration: const Duration(milliseconds: 500),
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: cardColor,
+                    color: isSelected ? primary.withOpacity(0.05) : cardColor,
                     borderRadius: BorderRadius.circular(18),
+                    border: isSelected
+                        ? Border.all(color: primary.withOpacity(0.5), width: 2)
+                        : null,
                     boxShadow: [
                       BoxShadow(
                         color: primary.withOpacity(0.10),

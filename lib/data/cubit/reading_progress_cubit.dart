@@ -37,6 +37,7 @@ class ReadingProgressCubit extends Cubit<ReadingProgressState> {
       }
 
       final scrollOffset = await LastReadService.getLastScrollOffset();
+      final ayahNumber = await LastReadService.getLastAyahNumber();
 
       // Find surah name from list if available
       String surahName = 'سورة';
@@ -53,6 +54,7 @@ class ReadingProgressCubit extends Cubit<ReadingProgressState> {
         ReadingProgressLoaded(
           surahId: surahId,
           surahName: surahName,
+          ayahNumber: ayahNumber,
           scrollOffset: scrollOffset,
         ),
       );
@@ -63,24 +65,30 @@ class ReadingProgressCubit extends Cubit<ReadingProgressState> {
   }
 
   /// Update reading progress with debouncing (2 seconds)
-  void updateProgress(int surahId, String surahName, double scrollOffset) {
+  void updateProgress(
+    int surahId,
+    String surahName,
+    double scrollOffset, [
+    int ayahNumber = 0,
+  ]) {
     // Cancel previous timer
     _debounceTimer?.cancel();
 
     // Set new timer for debounced save
     _debounceTimer = Timer(const Duration(seconds: 2), () async {
       print(
-        'DEBUG: Cubit saving progress - Surah: $surahId, Offset: $scrollOffset',
+        'DEBUG: Cubit saving progress - Surah: $surahId, Ayah: $ayahNumber, Offset: $scrollOffset',
       );
 
       // Save to storage
-      await LastReadService.savePosition(surahId, scrollOffset);
+      await LastReadService.savePosition(surahId, scrollOffset, ayahNumber);
 
       // Emit new state
       emit(
         ReadingProgressLoaded(
           surahId: surahId,
           surahName: surahName,
+          ayahNumber: ayahNumber,
           scrollOffset: scrollOffset,
         ),
       );
@@ -91,20 +99,22 @@ class ReadingProgressCubit extends Cubit<ReadingProgressState> {
   Future<void> updateProgressImmediate(
     int surahId,
     String surahName,
-    double scrollOffset,
-  ) async {
+    double scrollOffset, [
+    int ayahNumber = 0,
+  ]) async {
     _debounceTimer?.cancel();
 
     print(
-      'DEBUG: Cubit immediate save - Surah: $surahId, Offset: $scrollOffset',
+      'DEBUG: Cubit immediate save - Surah: $surahId, Ayah: $ayahNumber, Offset: $scrollOffset',
     );
 
-    await LastReadService.savePosition(surahId, scrollOffset);
+    await LastReadService.savePosition(surahId, scrollOffset, ayahNumber);
 
     emit(
       ReadingProgressLoaded(
         surahId: surahId,
         surahName: surahName,
+        ayahNumber: ayahNumber,
         scrollOffset: scrollOffset,
       ),
     );
