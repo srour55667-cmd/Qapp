@@ -14,11 +14,15 @@ class ReadingProgressEmpty extends ReadingProgressState {}
 class ReadingProgressLoaded extends ReadingProgressState {
   final int surahId;
   final String surahName;
+  final int ayahNumber;
   final double scrollOffset;
 
   ReadingProgressLoaded({
     required this.surahId,
     required this.surahName,
+    this.ayahNumber = 0,
     required this.scrollOffset,
   });
+
+  List<Object?> get props => [surahId, surahName, ayahNumber, scrollOffset];
 }

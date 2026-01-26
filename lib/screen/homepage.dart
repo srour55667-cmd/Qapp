@@ -130,14 +130,21 @@ class _HomePageState extends State<HomePage> {
             // Determine display values based on state
             final bool hasProgress = state is ReadingProgressLoaded;
             final int surahId = hasProgress ? state.surahId : 1;
+            final int ayahNumber = hasProgress ? state.ayahNumber : 0;
             final String surahName = hasProgress ? state.surahName : 'الفاتحة';
-            final String subtitle = hasProgress
-                ? 'آخر توقف: $surahName'
-                : 'لا يوجد آخر توقف بعد';
+            final String buttonText = hasProgress ? 'رجوع' : 'ابدأ';
             final IconData icon = hasProgress
                 ? Icons.bookmark
                 : Icons.play_arrow;
-            final String buttonText = hasProgress ? 'رجوع' : 'ابدأ';
+
+            String subtitle = 'لا يوجد آخر توقف بعد';
+            if (hasProgress) {
+              if (ayahNumber > 0) {
+                subtitle = 'آخر توقف: $surahName (الآية $ayahNumber)';
+              } else {
+                subtitle = 'آخر توقف: $surahName';
+              }
+            }
 
             return SliverToBoxAdapter(
               child: Padding(
@@ -158,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                           builder: (_) => SurahTextPage(
                             surahId: surahId,
                             surahName: surahName,
+                            initialAyahNumber: ayahNumber,
                           ),
                         ),
                       );
