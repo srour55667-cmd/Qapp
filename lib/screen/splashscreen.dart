@@ -50,7 +50,7 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFf4f4ef),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -59,6 +59,7 @@ class _SplashscreenState extends State<Splashscreen> {
               padding: const EdgeInsets.all(25),
               child: Image.asset(
                 "assets/images/logo.png",
+
                 width: 240,
                 height: 240,
                 fit: BoxFit.contain,

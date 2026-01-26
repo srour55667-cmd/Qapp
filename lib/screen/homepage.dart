@@ -13,6 +13,7 @@ import 'package:qapp/screen/settingpage/setting.dart';
 import 'package:qapp/screen/sipha/tasbeeh_page.dart';
 import 'package:qapp/screen/tafseer/TafsirCategoriesPage.dart';
 import 'package:qapp/screen/surah/surah_text_page.dart';
+import 'package:qapp/screen/support/support_page.dart';
 
 import 'package:qapp/model/suwer_nameEng_model.dart';
 import 'package:qapp/model/PrayerTimings/mainpayer.dart';
@@ -77,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           _buildQuranTab(context),
           _buildDashboardTab(context),
+          const SupportPage(),
           const SettingsPage(),
         ],
       ),
@@ -105,6 +107,11 @@ class _HomePageState extends State<HomePage> {
               color: AppColors.primary,
             ),
             label: 'الخدمات',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_border_rounded),
+            selectedIcon: Icon(Icons.favorite_rounded, color: Colors.redAccent),
+            label: 'دعم التطبيق',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),

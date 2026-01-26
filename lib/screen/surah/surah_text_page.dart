@@ -141,9 +141,51 @@ class _SurahTextPageState extends State<SurahTextPage> {
 
   void _startAutoScroll() {
     _stopAutoScroll();
-    // Auto-scroll implementation requires specific logic for ScrollablePositionedList
-    // which is not trivial (requires recursive scrolling or physics manipulation).
-    // Disabling for this specific task to focus on Resume Reliability.
+
+    if (!_isAutoScrollEnabled) return;
+
+    // Use a periodic timer for continuous smooth scrolling
+    // 32ms is approx 30fps
+    _autoScrollTimer = Timer.periodic(const Duration(milliseconds: 32), (
+      timer,
+    ) {
+      if (!mounted || !_isAutoScrollEnabled) {
+        timer.cancel();
+        return;
+      }
+
+      final positions = _itemPositionsListener.itemPositions.value;
+      if (positions.isEmpty) return;
+
+      // Find the top-most visible item to anchor scrolling
+      final sorted = positions.toList()
+        ..sort((a, b) => a.index.compareTo(b.index));
+      final currentItem = sorted.first;
+
+      // Calculate scroll step based on speed
+      // Base speed: 5% of screen height per second
+      // Tick duration: 0.032s
+      final double baseSpeed = 0.05;
+      final double step = baseSpeed * _scrollSpeed * 0.032;
+
+      // Decrease alignment to move item UP (scroll DOWN)
+      // itemLeadingEdge is 0.0 at top. Negative means above top.
+      double targetAlignment = currentItem.itemLeadingEdge - step;
+
+      _itemScrollController.jumpTo(
+        index: currentItem.index,
+        alignment: targetAlignment,
+      );
+
+      // Check for End of Surah
+      // If the last item is visible and fully within viewport (trailing edge <= 1.0)
+      final total = _showBasmala ? _verses.length + 1 : _verses.length;
+      if (currentItem.index >= total - 1 &&
+          currentItem.itemTrailingEdge <= 1.0) {
+        _stopAutoScroll();
+        setState(() => _isAutoScrollEnabled = false);
+      }
+    });
   }
 
   void _stopAutoScroll() {
@@ -155,14 +197,9 @@ class _SurahTextPageState extends State<SurahTextPage> {
     setState(() {
       _isAutoScrollEnabled = enabled;
       if (enabled) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "المعذرة، التمرير التلقائي غير مدعوم حالياً في هذا الوضع",
-            ),
-          ),
-        );
-        _isAutoScrollEnabled = false;
+        _startAutoScroll();
+      } else {
+        _stopAutoScroll();
       }
     });
   }
