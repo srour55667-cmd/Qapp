@@ -30,3 +30,34 @@ class CustomSliverAppBar extends StatelessWidget {
     );
   }
 }
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final Widget title;
+  final bool centerTitle;
+  final List<Widget>? actions;
+  final Widget? leading;
+
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.centerTitle = true,
+    this.actions,
+    this.leading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: title,
+      centerTitle: centerTitle,
+      leading: leading,
+      actions: actions,
+      scrolledUnderElevation: 0,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      elevation: 0,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
