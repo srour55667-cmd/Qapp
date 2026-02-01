@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qapp/data/cubit/home_cubit.dart';
 import 'package:qapp/data/repository/quran_repository.dart';
 import 'package:qapp/screen/surah/quran_init_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -25,7 +26,10 @@ class _SplashscreenState extends State<Splashscreen> {
     final city = prefs.getString("selected_city") ?? "Cairo";
 
     // 2) جيب مواقيت الصلاة وجدول الإشعارات
-    await HomeCubit().getPrayerTimes(city);
+    // 2) جيب مواقيت الصلاة وجدول الإشعارات
+    if (mounted) {
+      await context.read<HomeCubit>().getPrayerTimes(city);
+    }
 
     // 3) تفقد جاهزية بيانات القرآن
     final isQuranReady = await QuranRepository.isQuranDataReady();
@@ -83,6 +87,8 @@ class _SplashscreenState extends State<Splashscreen> {
                 color: Color(0xFFA8A8A8),
               ),
             ),
+            const SizedBox(height: 15),
+            const CircularProgressIndicator(color: Color(0xFF9543FF)),
           ],
         ),
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:qapp/data/cubit/dhikr_cubit.dart';
 
 // Cubits
@@ -11,28 +10,24 @@ import 'package:qapp/data/cubit/reading_progress_cubit.dart';
 // Screens
 import 'package:qapp/screen/splashscreen.dart';
 import 'package:qapp/screen/themfile/app_themes.dart';
-import 'package:qapp/services/notificationservices/notification_service.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 
-ensureNotificationPermissions() async {
-  final status = await Permission.notification.status;
-  if (status.isDenied || status.isPermanentlyDenied) {
-    final result = await Permission.notification.request();
-    if (result.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-  }
-}
+import 'package:qapp/services/app_bootstrapper.dart';
 
 void main() async {
+  final stopwatch = Stopwatch()..start();
+  print('Startup: main() started at ${stopwatch.elapsedMilliseconds}ms');
+
+  // 1. Critical Init
   tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
-  ensureNotificationPermissions();
-  await NotificationService.initialize();
-  // Clear old and schedule new batch (reliable strategy)
-  await NotificationService.rescheduleAll();
+  print('Startup: Binding & TZ init took ${stopwatch.elapsedMilliseconds}ms');
 
+  // 2. Start Bootstrapper (handles heavy background work)
+  AppBootstrapper.init();
+
+  // 3. Launch App immediately
   runApp(
     MultiBlocProvider(
       providers: [
@@ -44,6 +39,7 @@ void main() async {
       child: const MyApp(),
     ),
   );
+  print('Startup: runApp called at ${stopwatch.elapsedMilliseconds}ms');
 }
 
 class MyApp extends StatelessWidget {

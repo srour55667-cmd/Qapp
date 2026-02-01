@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.srour.ayaat"
+    namespace = "com.abdelmoneim.ayaat"
     compileSdk = 35
 
     compileOptions {
@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.srour.ayaat"
+        applicationId = "com.abdelmoneim.ayaat"
         minSdk = 21
         targetSdk = 35
         versionCode = 1

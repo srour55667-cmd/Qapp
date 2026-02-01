@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qapp/core/theme/app_spacing.dart';
-import 'package:qapp/screen/tafseer/TafsirResultPage.dart';
+import 'package:qapp/screen/tafseer/tafsir_result_page.dart';
 import 'package:qapp/services/ayah_audio_service.dart';
 
 class AyahActionSheet extends StatefulWidget {
@@ -113,7 +113,7 @@ class _AyahActionSheetState extends State<AyahActionSheet> {
             height: 4,
             margin: const EdgeInsets.only(bottom: AppSpacing.lg),
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -178,7 +178,7 @@ class _AyahActionSheetState extends State<AyahActionSheet> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: (color ?? theme.iconTheme.color)?.withOpacity(0.1),
+          color: (color ?? theme.iconTheme.color)?.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: color ?? theme.iconTheme.color),

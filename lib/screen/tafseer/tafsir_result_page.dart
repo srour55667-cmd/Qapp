@@ -71,7 +71,7 @@ class _TafsirResultPageState extends State<TafsirResultPage> {
               // Assuming list is sorted by Ayah number.
               // Safe find:
               final foundIndex = list.indexWhere(
-                (element) => element.aya == widget.initialAyahNumber.toString(),
+                (element) => element.aya == widget.initialAyahNumber,
               );
               if (foundIndex != -1) {
                 initialIndex = foundIndex;
@@ -88,21 +88,26 @@ class _TafsirResultPageState extends State<TafsirResultPage> {
                 final ayah = list[index];
                 final isSelected =
                     widget.initialAyahNumber != null &&
-                    ayah.aya == widget.initialAyahNumber.toString();
+                    ayah.aya == widget.initialAyahNumber;
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 500),
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: isSelected ? primary.withOpacity(0.05) : cardColor,
+                    color: isSelected
+                        ? primary.withValues(alpha: 0.05)
+                        : cardColor,
                     borderRadius: BorderRadius.circular(18),
                     border: isSelected
-                        ? Border.all(color: primary.withOpacity(0.5), width: 2)
+                        ? Border.all(
+                            color: primary.withValues(alpha: 0.5),
+                            width: 2,
+                          )
                         : null,
                     boxShadow: [
                       BoxShadow(
-                        color: primary.withOpacity(0.10),
+                        color: primary.withValues(alpha: 0.10),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -151,7 +156,7 @@ class _TafsirResultPageState extends State<TafsirResultPage> {
                         style: TextStyle(
                           fontSize: 16,
                           height: 1.7,
-                          color: onSurface.withOpacity(0.8),
+                          color: onSurface.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

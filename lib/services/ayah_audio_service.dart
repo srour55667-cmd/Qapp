@@ -1,5 +1,4 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
 
 /// Service to handle playing specific Ayah audio
 /// URL pattern: https://everyayah.com/data/Alafasy_128kbps/{surah}{ayah}.mp3
@@ -28,8 +27,6 @@ class AyahAudioService {
       final String url =
           'https://everyayah.com/data/Alafasy_128kbps/$surahStr$ayahStr.mp3';
 
-      print('Playing Ayah: $url');
-
       await _player.play(UrlSource(url));
       _isPlaying = true;
       onStateChanged?.call(true);
@@ -39,7 +36,7 @@ class AyahAudioService {
         onStateChanged?.call(false);
       });
     } catch (e) {
-      print('Error playing ayah audio: $e');
+      // print('Error playing ayah audio: $e');
       _isPlaying = false;
       onStateChanged?.call(false);
     }

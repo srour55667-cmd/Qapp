@@ -264,7 +264,7 @@ class _SurahTextPageState extends State<SurahTextPage> {
                     borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
+                        color: Colors.black.withValues(alpha: 0.02),
                         blurRadius: 5,
                         offset: const Offset(0, 2),
                       ),
@@ -311,11 +311,11 @@ class _SurahTextPageState extends State<SurahTextPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.95),
+        color: theme.cardColor.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
