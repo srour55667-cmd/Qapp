@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qapp/model/surah_nameAr.dart';
-import 'package:qapp/screen/tafseer/TafsirResultPage.dart';
+import 'package:qapp/screen/tafseer/tafsir_result_page.dart';
 
 class TafsirSurahListPage extends StatelessWidget {
   final String tafsirName;
@@ -38,7 +38,10 @@ class TafsirSurahListPage extends StatelessWidget {
               color: cardColor,
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
-                BoxShadow(color: primary.withOpacity(0.10), blurRadius: 8),
+                BoxShadow(
+                  color: primary.withValues(alpha: 0.10),
+                  blurRadius: 8,
+                ),
               ],
             ),
             child: ListTile(

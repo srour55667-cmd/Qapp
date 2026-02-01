@@ -145,48 +145,54 @@ class HomeCubit extends Cubit<Homestate> {
       emit(PrayerSuccessState(data: data));
 
       // --------------------------
-      //  Schedule Current Month Prayers (Batch)
+      //  Schedule Current Month Prayers (Batch) - Background
       // --------------------------
-      final calendar = await prayerService.getPrayerCalendarByCity(
-        city: city,
-        country: "Egypt",
-      );
-
-      await NotificationService.cancelAllPrayers();
-
-      int notificationId = 200; // Start ID for prayers
-
-      for (var dayData in calendar) {
-        final d = dayData.date;
-        final t = dayData.timings;
-        final date = DateTime(d.year, d.month, d.day);
-
-        final prayers = {
-          "الفجر": t.fajr,
-          "الظهر": t.dhuhr,
-          "العصر": t.asr,
-          "المغرب": t.maghrib,
-          "العشاء": t.isha,
-        };
-
-        for (var entry in prayers.entries) {
-          final timeStr = entry.value;
-          final prayerName = entry.key;
-
-          final scheduledTime = NotificationService.parsePrayerDateTime(
-            timeStr,
-            date,
+      Future.delayed(const Duration(seconds: 2), () async {
+        try {
+          final calendar = await prayerService.getPrayerCalendarByCity(
+            city: city,
+            country: "Egypt",
           );
 
-          if (scheduledTime.isAfter(DateTime.now())) {
-            await NotificationService.scheduleOneTimePrayer(
-              notificationId++,
-              prayerName,
-              scheduledTime,
-            );
+          await NotificationService.cancelAllPrayers();
+
+          int notificationId = 200; // Start ID for prayers
+
+          for (var dayData in calendar) {
+            final d = dayData.date;
+            final t = dayData.timings;
+            final date = DateTime(d.year, d.month, d.day);
+
+            final prayers = {
+              "الفجر": t.fajr,
+              "الظهر": t.dhuhr,
+              "العصر": t.asr,
+              "المغرب": t.maghrib,
+              "العشاء": t.isha,
+            };
+
+            for (var entry in prayers.entries) {
+              final timeStr = entry.value;
+              final prayerName = entry.key;
+
+              final scheduledTime = NotificationService.parsePrayerDateTime(
+                timeStr,
+                date,
+              );
+
+              if (scheduledTime.isAfter(DateTime.now())) {
+                await NotificationService.scheduleOneTimePrayer(
+                  notificationId++,
+                  prayerName,
+                  scheduledTime,
+                );
+              }
+            }
           }
+        } catch (e) {
+          print("Error in background usage of scheduling: $e");
         }
-      }
+      });
 
       return data;
     } catch (e) {

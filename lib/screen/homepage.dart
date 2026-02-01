@@ -11,7 +11,7 @@ import 'package:qapp/screen/radio/radio_page.dart';
 import 'package:qapp/screen/recites/recites_page.dart';
 import 'package:qapp/screen/settingpage/setting.dart';
 import 'package:qapp/screen/sipha/tasbeeh_page.dart';
-import 'package:qapp/screen/tafseer/TafsirCategoriesPage.dart';
+import 'package:qapp/screen/tafseer/tafsir_categories_page.dart';
 import 'package:qapp/screen/surah/surah_text_page.dart';
 
 import 'package:qapp/model/suwer_nameEng_model.dart';

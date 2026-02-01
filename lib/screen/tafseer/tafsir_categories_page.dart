@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qapp/screen/tafseer/TafsirSurahListPage.dart';
+import 'package:qapp/screen/tafseer/tafsir_surah_list_page.dart';
 
 class TafsirCategoriesPage extends StatelessWidget {
   const TafsirCategoriesPage({super.key});
@@ -35,7 +35,7 @@ class TafsirCategoriesPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
-                  color: primary.withOpacity(0.12),
+                  color: primary.withValues(alpha: 0.12),
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
@@ -53,13 +53,17 @@ class TafsirCategoriesPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: item["enabled"] ? primary : onSurface.withOpacity(0.6),
+                  color: item["enabled"]
+                      ? primary
+                      : onSurface.withValues(alpha: 0.6),
                 ),
               ),
 
               trailing: Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: item["enabled"] ? primary : onSurface.withOpacity(0.4),
+                color: item["enabled"]
+                    ? primary
+                    : onSurface.withValues(alpha: 0.4),
               ),
 
               onTap: () {
